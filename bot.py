@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from portafolio import obtener_precio
 
-TOKEN = os.getenv("TELEGRAM_TOKEN", "8481722365:AAF8E3Y71kHkIfSfcIZUoADli-AjgDff9wc")
+TOKEN = os.getenv("TELEGRAM_TOKEN", "8481722365:AAF8E3Y71kHkIfSfcIZUoAD1i-AjgDff9wc")
 
 MIS_ACCIONES = ["AAPL", "TSLA", "MSFT", "GOOGL"]
 
