@@ -101,10 +101,38 @@ def build_message():
 
     return "\n".join(lines)
 
-def send_report():
-    text = build_message()
+def send_message(text):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     requests.post(url, json={"chat_id": CHAT_ID, "text": text, "parse_mode": "Markdown"})
+
+def build_news():
+    seen = set()
+    lines = ["📰 *Noticias de tu portafolio*\n"]
+
+    for symbol in PORTFOLIO:
+        try:
+            ticker = yf.Ticker(symbol)
+            noticias = ticker.news or []
+            for n in noticias[:2]:
+                content = n.get("content", {})
+                title = content.get("title", "")
+                url   = content.get("canonicalUrl", {}).get("url", "")
+                if not title or title in seen:
+                    continue
+                seen.add(title)
+                pub = content.get("pubDate", "")[:10]
+                lines.append(f"• [{title}]({url}) _({pub})_")
+        except Exception:
+            pass
+
+    if len(lines) == 1:
+        lines.append("_No se encontraron noticias recientes._")
+
+    return "\n".join(lines)
+
+def send_report():
+    send_message(build_message())
+    send_message(build_news())
     print(f"[{datetime.now().strftime('%H:%M:%S')}] Reporte enviado.")
 
 if __name__ == "__main__":
