@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Portafolio</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      color: #222;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    header h1 { font-size: 2rem; letter-spacing: 1px; }
+    header p  { color: #a0aec0; margin-top: 0.3rem; }
+
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+
+    /* Flash messages */
+    .flash-list { list-style: none; margin-bottom: 1.5rem; }
+    .flash-list li {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Upload card */
+    .upload-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      margin-bottom: 2rem;
+    }
+
+    .upload-card h2 { margin-bottom: 1rem; font-size: 1.1rem; color: #444; }
+
+    .upload-form {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .upload-form input[type="file"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.5rem;
+      border: 2px dashed #cbd5e0;
+      border-radius: 8px;
+      background: #f7fafc;
+      cursor: pointer;
+    }
+
+    .btn-upload {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .btn-upload:hover { background: #4f46e5; }
+
+    /* Gallery */
+    .gallery-title { font-size: 1.1rem; color: #444; margin-bottom: 1rem; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .photo-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-card-footer {
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .photo-name {
+      font-size: 0.78rem;
+      color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .2s;
+    }
+
+    .btn-delete:hover { background: #fecaca; }
+
+    .empty-state {
+      text-align: center;
+      color: #aaa;
+      padding: 3rem 0;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Mi Portafolio</h1>
+  <p>Galería de fotos personal</p>
+</header>
+
+<main>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flash-list">
+        {% for msg in messages %}
+          <li>{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <div class="upload-card">
+    <h2>Subir nueva foto</h2>
+    <form class="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
+      <input type="file" name="photo" accept="image/*" required />
+      <button type="submit" class="btn-upload">Subir foto</button>
+    </form>
+    <p style="margin-top:.75rem;font-size:.8rem;color:#999;">
+      Formatos aceptados: PNG, JPG, JPEG, GIF, WEBP &nbsp;|&nbsp; Máximo 16 MB
+    </p>
+  </div>
+
+  <h2 class="gallery-title">Fotos ({{ photos|length }})</h2>
+
+  {% if photos %}
+    <div class="gallery">
+      {% for photo in photos %}
+        <div class="photo-card">
+          <img src="{{ url_for('uploaded_file', filename=photo) }}" alt="{{ photo }}" loading="lazy" />
+          <div class="photo-card-footer">
+            <span class="photo-name" title="{{ photo }}">{{ photo }}</span>
+            <form method="POST" action="/delete/{{ photo }}" onsubmit="return confirm('¿Eliminar esta foto?');">
+              <button type="submit" class="btn-delete">Borrar</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty-state">Todavía no hay fotos. ¡Subí la primera!</p>
+  {% endif %}
+</main>
+
+</body>
+</html>
