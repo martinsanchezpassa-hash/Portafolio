@@ -5,7 +5,7 @@ import yfinance as yf
 from datetime import datetime
 
 TOKEN = "8481722365:AAF8E3Y71kHkIfSfcIZUoAD1i-AjgDff9wc"
-CHAT_ID = "8725494993"
+CHAT_ID = 8725494993
 
 # Portafolio: (unidades, precio_promedio, moneda_base)
 PORTFOLIO = {
