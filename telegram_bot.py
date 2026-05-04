@@ -14,8 +14,13 @@ MIS_ACCIONES = ["AAPL", "TSLA", "MSFT", "GOOGL"]
 
 
 def obtener_precio(simbolo):
+    yf.set_tz_cache_location(None)
     accion = yf.Ticker(simbolo)
-    return accion.fast_info.last_price
+    # download fuerza petición HTTP fresca, sin caché local
+    df = yf.download(simbolo, period="1d", interval="1m", progress=False)
+    if df.empty:
+        raise ValueError(f"Sin datos para {simbolo}")
+    return float(df["Close"].iloc[-1])
 
 
 def construir_resumen(acciones):
